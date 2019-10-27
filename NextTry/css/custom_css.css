@@ -8,12 +8,13 @@
 
 .examples{
     margin-top: 100px;
-    margin-left: 30px;
-    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    width:80%;
 }
 
 .alert-examples{
-    margin-left: 30px;
+    align-items: stretch;
 }
 
 .input_example{
