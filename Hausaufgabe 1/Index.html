@@ -15,6 +15,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
     integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
 
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -27,7 +29,7 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
+  
   <title>Twitter Bootstrap Tutorial!</title>
 </head>
 
@@ -85,15 +87,19 @@
     </div>
   </nav>
 
-  <div class="jumbotron" id="jumbotron">
-    <h1 class="display-3 fg-light">Hello, world!</h1>
-    <p class="lead">Learn Twitter Bootstrap with this simple Tutorial!</p>
-    <hr class="my-2">
-    <p>Start by clicking one of these topics :)</p>
+  <div class="jumbotron jumbotron-responsive" id="jumbotron">
+    <div class="container jumbotron-text-container">
+        <h1 class="display-2 fg-light">
+          <span>Hello Bootstrap!</span>
+        </h1>
+        <p class="lead">Learn Twitter Bootstrap with this simple Tutorial!</p>
+        <hr class="my-2">
+        <p>Start by clicking one of these topics :)</p>
+    </div>
   </div>
 
 
-  <div class="container" style="background-color:lightgray;">
+  <div class="container" style="background-color:lightgray;" align="center">
     <!-- Example row of columns -->
     <div class="row" id="row">
       <div class="col-md-4" id="first_Example">
@@ -161,9 +167,7 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="JavaScript/editor.js"></script>
-
-  <div class="examples" id="alerts-div">
+  <div class="examples" id="alerts-div" data-aos="fade-up">
     <div class="alerts">
       <h1 align="center">Alerts</h1>
       <div class="alert-examples mb-3">
@@ -195,7 +199,7 @@
     </div>
   </div>
 
-  <div class="examples" id="input-example-div">
+  <div class="examples" id="input-example-div" data-aos="fade-up">
     <div class="input_example">
       <h1 align="center">Input group</h1>
       <div class="input-group mb-3">
@@ -242,9 +246,9 @@
 
   </div>
 
-  <div class="examples" id="buttons-div">
+  <div class="examples" id="buttons-div" data-aos="fade-up">
     <h1 align="center">Buttons</h1>
-    <div>
+    <div align="center">
       <button type="button" class="btn btn-primary">Primary</button>
       <button type="button" class="btn btn-secondary">Secondary</button>
       <button type="button" class="btn btn-success">Success</button>
@@ -257,9 +261,9 @@
     </div>
   </div>
 
-  <div class="examples" id="dropdown-buttons-div">
+  <div class="examples" id="dropdown-buttons-div" data-aos="fade-up">
     <h1 align="center">Dropdown Buttons</h1>
-    <div class="dropdown">
+    <div class="dropdown" align="center">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
         Dropdown button
@@ -271,7 +275,7 @@
       </div>
     </div>
 
-    <div class="examples" id="jumbotron-div">
+    <div class="examples" id="jumbotron-div" data-aos="fade-up">
       <h1 align="center">Jumbotron</h1>
       <div class="jumbotron">
         <h1 class="display-4">Hello, world!</h1>
@@ -283,7 +287,7 @@
       </div>
     </div>
 
-    <div class="examples" id="progress-bar-div">
+    <div class="examples" id="progress-bar-div" data-aos="fade-up">
       <h1 align="center">Progress bar</h1>
       <div>
         <div class="progress">
@@ -308,7 +312,7 @@
       </div>
     </div>
 
-    <div class="examples" id="breadcrumb-div">
+    <div class="examples" id="breadcrumb-div" data-aos="fade-up">
       <h1 align="center">Breadcrump</h1>
       <div>
         <nav aria-label="breadcrumb">
@@ -334,7 +338,7 @@
       </div>
     </div>
 
-    <div class="examples" id="spinners-div">
+    <div class="examples" id="spinners-div" data-aos="fade-up">
       <h1 align="center">Spinners</h1>
       <div>
         <div class="spinner-border text-primary" role="status">
@@ -364,7 +368,7 @@
       </div>
     </div>
 
-    <div class="examples" id="badge-div">
+    <div class="examples" id="badge-div" data-aos="fade-up">
       <h1 align="center">Badge</h1>
       <div>
         <h1>Example heading <span class="badge badge-secondary">New</span></h1>
@@ -376,7 +380,7 @@
       </div>
     </div>
 
-    <div class="examples" id="list-group-div">
+    <div class="examples" id="list-group-div" data-aos="fade-up">
       <h1 align="center">List groups</h1>
       <div>
         <ul class="list-group">
@@ -388,6 +392,10 @@
         </ul>
       </div>
     </div>
+
+    <script>
+      AOS.init();
+    </script>
 </body>
 
 </html>
