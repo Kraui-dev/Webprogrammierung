@@ -27,6 +27,10 @@
     align-items: stretch;
 }
 
+.centering-div{
+    text-align: center;
+}
+
 .head-examples{
     text-align: center;
 }
