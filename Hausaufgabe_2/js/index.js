@@ -219,14 +219,14 @@ function computeNextGen() {
 
     for (var i = 0; i < width; i++) {
         for (var j = 0; j < height; j++) {
-            applyRules(j, i, root);
+            checkRules(j, i, root);
         }
     }
 
     copyAndResetGrid();
 }
 
-function applyRules(row, col, root) {
+function checkRules(row, col, root) {
     var numNeighbors = countNeighbors(row, col);
     if (gameField[row][col] === 1) {
         if (numNeighbors < 2) {
@@ -343,10 +343,10 @@ function countNeighbors(row, col) {
 
     for (let i = -1; i < 2; i++) {
         for (let j = -1; j < 2; j++) {
-            const row2 = (row + i + Number(height)) % Number(height);
-            const col2 = (col + j + Number(width)) % Number(width);
+            const colMod = (col + j + Number(width)) % Number(width);
+            const rowMod = (row + i + Number(height)) % Number(height);
 
-            sum += gameField[row2][col2];
+            sum += gameField[rowMod][colMod];
         }
     }
 
