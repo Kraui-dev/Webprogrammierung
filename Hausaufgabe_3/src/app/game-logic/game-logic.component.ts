@@ -1,4 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Stage } from 'stage-js/platform/web';
+
+declare var stageAnimation: any;
 
 @Component({
   selector: 'app-game-logic',
@@ -54,6 +57,10 @@ export class GameLogicComponent implements OnInit {
 
   drawImageActualSize(){
   }
+
+  // Stage(stage) {
+  //   stage.viewbox(300, 300, mode = 'in-pad')
+  // });
 
   loadBackground(){
     // for(let i = 0; i < 45; i++){
