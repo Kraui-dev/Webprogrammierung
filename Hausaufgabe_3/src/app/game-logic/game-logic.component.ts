@@ -14,7 +14,6 @@ export class GameLogicComponent implements OnInit {
   @ViewChild('gameCanvas', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
   matrixField: number[][];
-  enumField: GameFieldTypes[][];
 
   private ctx: CanvasRenderingContext2D;
   private playerDirection: MoveDirection;
@@ -32,7 +31,6 @@ export class GameLogicComponent implements OnInit {
     this.ctx = this.canvas.nativeElement.getContext('2d');
         
     this.create2DField();
-    this.createEnumField();
     this.drawGameField();
     this.drawPacMan();
     this.playerDirection = MoveDirection.Right;
@@ -136,47 +134,6 @@ export class GameLogicComponent implements OnInit {
     }
   }
 
-  createEnumField(){
-
-    this.enumField = [];
-
-    for(let i = 0; i < 31;i++){
-      for(let j = 0;j < 28;j++){
-
-        this.enumField[i] = [];
-
-        switch(this.matrixField[i][j]){
-          case(0): {
-            this.enumField[i][j] = 5;
-            //this.enumField[i][j] = GameFieldTypes.Wall;
-
-            break;
-          }
-          case(1): {
-            this.enumField[i][j] = GameFieldTypes.Pellet;
-
-            break;
-          }
-          case(2): {
-            this.enumField[i][j] = GameFieldTypes.Free;
-
-            break;
-          }
-          case(3): {
-            this.enumField[i][j] = GameFieldTypes.PacMan;
-
-            break;
-          }
-          case(4): {
-            this.enumField[i][j] = GameFieldTypes.Ghost;
-
-            break;
-          }
-        }
-      }
-    }
-  }
-
   create2DField(){
     this.matrixField = [
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -224,28 +181,72 @@ export class GameLogicComponent implements OnInit {
   }
 
   initializeGhosts(){
-    let redGhost = new GameObject(14, 15);
-    let turqoiseGhost = new GameObject(14, 15);
-    let orangeGhost = new GameObject(14, 15);
-    let pinkGhost = new GameObject(14, 15);
+    let redGhost = new GameObject(9, 15);
+    let turqoiseGhost = new GameObject(12, 24);
+    let orangeGhost = new GameObject(2, 1);
+    let pinkGhost = new GameObject(24, 3);
 
-    // let redThread = new Promise(() => this.startGhost(redGhost));
-    // let turquioseThread = new Promise(() => this.startGhost(turqoiseGhost));
-    // let orangeThread = new Promise(() => this.startGhost(orangeGhost));
-    // let pinkThread = new Promise(() => this.startGhost(pinkGhost));
+    redGhost.moveDirection = MoveDirection.Up;
+    redGhost.isRunning = true;
+
+    turqoiseGhost.moveDirection = MoveDirection.Down;
+    turqoiseGhost.isRunning = true;
+
+    orangeGhost.moveDirection = MoveDirection.Right;
+    orangeGhost.isRunning = true;
+
+    pinkGhost.moveDirection = MoveDirection.Up;
+    pinkGhost.isRunning = true;
+
+    let redThread = new Promise(() => this.startGhost(redGhost));
+    let turquioseThread = new Promise(() => this.startGhost(turqoiseGhost));
+    let orangeThread = new Promise(() => this.startGhost(orangeGhost));
+    let pinkThread = new Promise(() => this.startGhost(pinkGhost));
   }
 
-  startGhost(ghost: GameObject){
+  async startGhost(ghost: GameObject){
     while(ghost.isRunning){
-    (async () =>{
-        await this.delay(1000);
-
-      });
+      await this.delay(500);
+      this.clearGhost(ghost);
 
       let nextMove = this.getNextGhostMove(ghost);
 
-      //do movement hier
+      ghost.moveDirection = nextMove.moveDirection;
+      ghost.xPosition = nextMove.xPosition;
+      ghost.yPosition = nextMove.yPosition;
+      
+      this.doGhostMovement(ghost);
     }
+  }
+
+  clearGhost(ghost: GameObject){
+    
+    console.log("clear rect");
+    this.ctx.clearRect(ghost.xPosition * 10 - 1, ghost.yPosition * 10 - 3.5, 17.5, 16);
+    this.ctx.save();
+    
+    // this.ctx.fillStyle = "red";
+    // this.ctx.fillRect(ghost.xPosition * 10 - 1, ghost.yPosition * 10 - 3.5, 17.5, 16);
+  }
+
+  doGhostMovement(ghost: GameObject){
+    // console.log("clear rect");
+    // this.ctx.clearRect(ghost.xPosition * 10 - 2, ghost.yPosition * 10 - 3.5, 20, 16);
+    // this.ctx.save();
+    
+
+    // this.ctx.fillStyle = "red";
+    // this.ctx.fillRect(ghost.xPosition * 10 - 2, ghost.yPosition * 10 - 3.5, 20, 16);
+    console.log("paint ghost");
+    let img = new Image();
+    img.src = '../../assets/pink_ghost.png';
+    img.width = 28;
+    img.height = 31;
+    img.onload = () => {
+      this.ctx.drawImage(img, ghost.xPosition * 10 - 2,  ghost.yPosition * 10 - 3.5);
+    }
+
+    this.ctx.restore();
   }
 
   async delay(ms: number) {
@@ -331,7 +332,7 @@ export class GameLogicComponent implements OnInit {
     let xPosition = gameObject.xPosition;
     let yPosition = gameObject.yPosition + 1;
 
-    if (this.enumField[yPosition][xPosition] != 0){
+    if (this.matrixField[yPosition][xPosition] != 0){
       return true;
     }
 
@@ -342,7 +343,7 @@ export class GameLogicComponent implements OnInit {
     let xPosition = gameObject.xPosition;
     let yPosition = gameObject.yPosition - 1;
 
-    if (this.enumField[yPosition][xPosition] != 0){
+    if (this.matrixField[yPosition][xPosition] != 0){
       return true;
     }
 
@@ -353,7 +354,7 @@ export class GameLogicComponent implements OnInit {
     let xPosition = gameObject.xPosition - 1;
     let yPosition = gameObject.yPosition;
 
-    if (this.enumField[yPosition][xPosition] != 0){
+    if (this.matrixField[yPosition][xPosition] != 0){
       return true;
     }
 
@@ -364,7 +365,7 @@ export class GameLogicComponent implements OnInit {
     let xPosition = gameObject.xPosition + 1;
     let yPosition = gameObject.yPosition;
 
-    if (this.enumField[yPosition][xPosition] != 0){
+    if (this.matrixField[yPosition][xPosition] != 0){
       return true;
     }
 
@@ -377,21 +378,25 @@ getNewMovePosition(gameObject: GameObject){
   switch(gameObject.moveDirection){
     case(MoveDirection.Up): {
       nextGamePosition.yPosition--;
+      nextGamePosition.moveDirection = MoveDirection.Up;
       break;
     }
 
     case(MoveDirection.Down): {
       nextGamePosition.yPosition++;
+      nextGamePosition.moveDirection = MoveDirection.Down;
       break;
     }
 
     case(MoveDirection.Left): {
       nextGamePosition.xPosition--;
+      nextGamePosition.moveDirection = MoveDirection.Left;
       break;
     }
 
     case(MoveDirection.Right): {
       nextGamePosition.xPosition++;
+      nextGamePosition.moveDirection = MoveDirection.Right;
       break;
     }
   }
@@ -425,7 +430,7 @@ let nextGamePosition = new GamePosition(ghost.xPosition, ghost.yPosition);
     }
   }
 
-  if (this.matrixField[nextGamePosition.xPosition][nextGamePosition.yPosition] != 0){
+  if (this.matrixField[nextGamePosition.yPosition][nextGamePosition.xPosition] == 0){
       return false;
   }
   else{
@@ -433,11 +438,11 @@ let nextGamePosition = new GamePosition(ghost.xPosition, ghost.yPosition);
   }
 }
 
-  movePacMan(){
-console.log("pac Man is running")
+  async movePacMan(){
+  console.log("pac Man is running")
     while(this.pacMan.isRunning){
 
-      this.delay(1000);
+      await this.delay(500);
 
       this.doAnimation();
       this.doMovementPacMan(this.playerDirection);
@@ -485,9 +490,6 @@ console.log("pac Man is running")
         this.pacMan.yPosition = newPosition.yPosition;
       }
     }
-  
-
-    this.getNextPacManMove();
 
     return true;
   }
@@ -496,18 +498,22 @@ console.log("pac Man is running")
     switch(this.pacMan.moveDirection){
       case(MoveDirection.Down): {
         this.pacMan.moveDirection = MoveDirection.Up;
+        this.playerDirection = MoveDirection.Up;
         return new GamePosition(this.pacMan.xPosition, this.pacMan.yPosition - 1)
       }
       case(MoveDirection.Up): {
         this.pacMan.moveDirection = MoveDirection.Down;
+        this.playerDirection = MoveDirection.Down;
         return new GamePosition(this.pacMan.xPosition, this.pacMan.yPosition + 1)
       }
       case(MoveDirection.Right): {
         this.pacMan.moveDirection = MoveDirection.Left;
+        this.playerDirection = MoveDirection.Left;
         return new GamePosition(this.pacMan.xPosition - 1, this.pacMan.yPosition)
       }
       case(MoveDirection.Left): {
         this.pacMan.moveDirection = MoveDirection.Right;
+        this.playerDirection = MoveDirection.Right;
         return new GamePosition(this.pacMan.xPosition + 1, this.pacMan.yPosition)
       }
     }
@@ -568,10 +574,6 @@ console.log("pac Man is running")
     else{
       return true;
     }
-  }
-
-  getNextPacManMove(){
-
   }
 }
 
