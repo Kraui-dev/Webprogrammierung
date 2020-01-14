@@ -17,7 +17,7 @@ export class GameLogicComponent implements OnInit {
   enumField: GameFieldTypes[][];
 
   private ctx: CanvasRenderingContext2D;
-
+  private playerDirection: MoveDirection;
   private redGhost: GameObject;
   private orangeGhost: GameObject;
   private turquioseGhost: GameObject;
@@ -35,11 +35,12 @@ export class GameLogicComponent implements OnInit {
     this.createEnumField();
     this.drawGameField();
     this.drawPacMan();
+    this.playerDirection = MoveDirection.Right;
     let self = this;
     document.addEventListener('keydown', function(e: KeyboardEvent){
         self.keyboardInput(e);
     });
-       // this.initializeGame();
+       this.initializeGame();
   }
 
   drawPacMan(){
@@ -51,7 +52,7 @@ export class GameLogicComponent implements OnInit {
     img.height = 31;
     
     img.onload = () => {
-      this.ctx.drawImage(img, this.pacMan.xPosition * 10 - 1,  this.pacMan.yPosition * 10 - 3.5);
+      this.ctx.drawImage(img, this.pacMan.xPosition * 10,  this.pacMan.yPosition * 10 - 3.5);
       console.log(this.pacMan.yPosition)
     }
   }
@@ -60,21 +61,21 @@ export class GameLogicComponent implements OnInit {
     // PRESS LEFT ARROW
     if (event.keyCode == 37) {
       console.log("left key pressed");
-      this.movePacMan(MoveDirection.Left);
+      this.playerDirection = MoveDirection.Left;
     }
     // PRESS UP ARROW
     else if (event.keyCode == 38) {
-      this.movePacMan(MoveDirection.Up);
+      this.playerDirection = MoveDirection.Up;
     }
     // PRESS RIGHT ARROW
     else if (event.keyCode == 39) {
       console.log("right key pressed");
-      this.movePacMan(MoveDirection.Right);
+      this.playerDirection = MoveDirection.Right;
     }
     // PRESS DOWN ARROW
     else if (event.keyCode == 40) {
       console.log("down key pressed");
-      this.movePacMan(MoveDirection.Down)
+      this.playerDirection = MoveDirection.Down;
     }
  }
 
@@ -213,7 +214,13 @@ export class GameLogicComponent implements OnInit {
   }
 
   initializeGame(){
+    this.initializePacMan();
     this.initializeGhosts();
+  }
+
+  initializePacMan(){
+    this.pacMan.isRunning = true;
+    let pacManThread = new Promise(() => this.movePacMan());
   }
 
   initializeGhosts(){
@@ -222,7 +229,7 @@ export class GameLogicComponent implements OnInit {
     let orangeGhost = new GameObject(14, 15);
     let pinkGhost = new GameObject(14, 15);
 
-    let redThread = new Promise(() => this.startGhost(redGhost));
+    // let redThread = new Promise(() => this.startGhost(redGhost));
     // let turquioseThread = new Promise(() => this.startGhost(turqoiseGhost));
     // let orangeThread = new Promise(() => this.startGhost(orangeGhost));
     // let pinkThread = new Promise(() => this.startGhost(pinkGhost));
@@ -426,9 +433,15 @@ let nextGamePosition = new GamePosition(ghost.xPosition, ghost.yPosition);
   }
 }
 
-  movePacMan(direction: MoveDirection){
-    this.doAnimation();
-    this.doMovementPacMan(direction);
+  movePacMan(){
+console.log("pac Man is running")
+    while(this.pacMan.isRunning){
+
+      this.delay(1000);
+
+      this.doAnimation();
+      this.doMovementPacMan(this.playerDirection);
+    }
   }
 
   doAnimation(){
@@ -455,9 +468,22 @@ let nextGamePosition = new GamePosition(ghost.xPosition, ghost.yPosition);
 
       this.pacMan.xPosition = newPosition.xPosition;
       this.pacMan.yPosition = newPosition.yPosition;
+
+      this.pacMan.moveDirection = this.playerDirection;
     }
     else{
+      if(this.checkPacManMovePossible(this.pacMan.moveDirection)){
+        let newPosition = this.changeMovePosition(this.pacMan, this.pacMan.moveDirection);
 
+        this.pacMan.xPosition = newPosition.xPosition;
+        this.pacMan.yPosition = newPosition.yPosition;
+      }
+      else{
+        let newPosition = this.reversePacManMovement();
+        
+        this.pacMan.xPosition = newPosition.xPosition;
+        this.pacMan.yPosition = newPosition.yPosition;
+      }
     }
   
 
@@ -465,6 +491,29 @@ let nextGamePosition = new GamePosition(ghost.xPosition, ghost.yPosition);
 
     return true;
   }
+
+  reversePacManMovement(){
+    switch(this.pacMan.moveDirection){
+      case(MoveDirection.Down): {
+        this.pacMan.moveDirection = MoveDirection.Up;
+        return new GamePosition(this.pacMan.xPosition, this.pacMan.yPosition - 1)
+      }
+      case(MoveDirection.Up): {
+        this.pacMan.moveDirection = MoveDirection.Down;
+        return new GamePosition(this.pacMan.xPosition, this.pacMan.yPosition + 1)
+      }
+      case(MoveDirection.Right): {
+        this.pacMan.moveDirection = MoveDirection.Left;
+        return new GamePosition(this.pacMan.xPosition - 1, this.pacMan.yPosition)
+      }
+      case(MoveDirection.Left): {
+        this.pacMan.moveDirection = MoveDirection.Right;
+        return new GamePosition(this.pacMan.xPosition + 1, this.pacMan.yPosition)
+      }
+    }
+
+  }
+
   changeMovePosition(gameObject: GameObject, moveDirection: MoveDirection) {
 
     this.pacMan.moveDirection = moveDirection;
