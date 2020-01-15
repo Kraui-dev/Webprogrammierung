@@ -15,6 +15,7 @@ export class GameLogicComponent implements OnInit {
   canvas: ElementRef<HTMLCanvasElement>;
   matrixField: number[][];
 
+  private pelletCounter: number;
   private ctx: CanvasRenderingContext2D;
   private playerDirection: MoveDirection;
   private redGhost: GameObject;
@@ -29,7 +30,7 @@ export class GameLogicComponent implements OnInit {
   ngOnInit() {
 
     this.ctx = this.canvas.nativeElement.getContext('2d');
-        
+      
     this.create2DField();
     this.drawGameField();
     this.drawPacMan();
@@ -173,6 +174,7 @@ export class GameLogicComponent implements OnInit {
   initializeGame(){
     this.initializePacMan();
     this.initializeGhosts();
+    this.pelletCounter = 0;
   }
 
   initializePacMan(){
@@ -207,7 +209,9 @@ export class GameLogicComponent implements OnInit {
   async startGhost(ghost: GameObject){
     while(ghost.isRunning){
       await this.delay(500);
-      this.clearGhost(ghost);
+      let oldPosition = new GamePosition(ghost.xPosition, ghost.yPosition);
+
+      this.clearGhost(ghost, oldPosition);
 
       let nextMove = this.getNextGhostMove(ghost);
 
@@ -219,11 +223,36 @@ export class GameLogicComponent implements OnInit {
     }
   }
 
-  clearGhost(ghost: GameObject){
-    
-    console.log("clear rect");
-    this.ctx.clearRect(ghost.xPosition * 10 - 1, ghost.yPosition * 10 - 3.5, 17.5, 16);
-    this.ctx.save();
+  clearGhost(ghost: GameObject, oldPosition: GamePosition){
+    let value = this.matrixField[oldPosition.yPosition][oldPosition.xPosition];
+
+    if(value == 2){
+      console.log("clear rect");
+      this.ctx.clearRect(ghost.xPosition * 10 - 1, ghost.yPosition * 10 - 3.5, 17.5, 16);
+      this.ctx.save();
+
+      return;
+    }
+
+    if(value == 1){
+      console.log("clear rect");
+      this.ctx.clearRect(ghost.xPosition * 10 - 1, ghost.yPosition * 10 - 3.5, 17.5, 16);
+      this.ctx.save();
+
+      let img = new Image();
+      img.src = '../../assets/pellet.png';
+      img.width = 28;
+      img.height = 31;
+      img.onload = () => {
+        this.ctx.drawImage(img, ghost.xPosition * 10 + 5,  ghost.yPosition * 10 + 2);
+      }
+
+      return;
+    }
+
+    // console.log("clear rect");
+    // this.ctx.clearRect(ghost.xPosition * 10 - 1, ghost.yPosition * 10 - 3.5, 17.5, 16);
+    // this.ctx.save();
     
     // this.ctx.fillStyle = "red";
     // this.ctx.fillRect(ghost.xPosition * 10 - 1, ghost.yPosition * 10 - 3.5, 17.5, 16);
@@ -445,8 +474,73 @@ let nextGamePosition = new GamePosition(ghost.xPosition, ghost.yPosition);
       await this.delay(500);
 
       this.doAnimation();
+
+      if(this.checkPacManCollision()){
+        if (!this.pacMan.isRunning){
+
+        }
+      }
+
       this.doMovementPacMan(this.playerDirection);
     }
+  }
+
+  checkPacManCollision(){
+    if(this.isGhostHit()){
+      this.gameOver();
+
+      return true;
+    }
+
+    if (this.isPelletAvailable()){
+      this.gameWon();
+      return true;
+    }
+    
+    return false;
+  }
+
+  gameWon(){
+    // game won
+  }
+
+  gameOver(){
+    // do something
+  }
+
+  isPelletAvailable(){
+    if (this.matrixField[this.pacMan.yPosition][this.pacMan.xPosition] == 1){
+      this.pelletCounter++;
+      //246
+      this.matrixField[this.pacMan.yPosition][this.pacMan.xPosition] = 2;
+      //hit
+
+      if(this.pelletCounter == 246){
+        return true;
+      }
+    } 
+
+    return false;
+  }
+
+  isGhostHit(){
+    if (this.pacMan.xPosition == this.redGhost.xPosition && this.pacMan.yPosition == this.redGhost.yPosition){
+      return true;
+    } 
+
+    if (this.pacMan.xPosition == this.turquioseGhost.xPosition && this.pacMan.yPosition == this.turquioseGhost.yPosition){
+      return true;
+    } 
+
+    if (this.pacMan.xPosition == this.orangeGhost.xPosition && this.pacMan.yPosition == this.orangeGhost.yPosition){
+      return true;
+    } 
+
+    if (this.pacMan.xPosition == this.pinkGhost.xPosition && this.pacMan.yPosition == this.pinkGhost.yPosition){
+      return true;
+    } 
+
+    return false;
   }
 
   doAnimation(){
