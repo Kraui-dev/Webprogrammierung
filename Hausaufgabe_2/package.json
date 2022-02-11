@@ -22,7 +22,7 @@
     "gulp-sass": "^4.0.2",
     "gulp-tslint": "^8.1.4",
     "gulp-uncomment": "^0.3.0",
-    "node-sass": "^4.13.0"
+    "node-sass": "^7.0.0"
   },
   "dependencies": {
     "gulp-uglifycss": "^1.1.0"
